@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useReducer, useMemo } from 'react';
 
 function formatTime(inputTime) {
     const rawTime = new Date(inputTime);
@@ -9,6 +9,7 @@ function formatTime(inputTime) {
     return `${minutes} : ${seconds} . ${centis}`;
 }
 
+const not = x => !x
 function Stopwatch() {
     const [time, setTime] = useState(0);
     const [isOn, setIsOn] = useState(false);
@@ -16,11 +17,6 @@ function Stopwatch() {
 
     const interval = useRef(null);
     const startTime = useRef(0);
-    const startLapTime = useRef(0);
-    const shortestLap = useRef(null);
-    const longestLap = useRef(null);
-    const lapDisplay = useRef([]);
-    const totalLapTime = useRef(0); 
     //const stopTimeAdjustment = useRef(0);
 
     //Increment clock on start and don't increment on stop
@@ -40,13 +36,8 @@ function Stopwatch() {
 
     function reset() {
         startTime.current = 0;
-        startLapTime.current = 0;
-        shortestLap.current = null; //In milliseconds
-        longestLap.current = null; //In milliseconds
-        totalLapTime.current = 0;
-        //lapDisplay.current = [];
         setTime(0);
-        setLaps(lapsList => []);
+        setLaps([]);
         //stopTimeAdjustment.current = 0;
     }
 
@@ -55,42 +46,21 @@ function Stopwatch() {
     }
 
     function lap() {
-        //Calculate time of new lap and set timer for next lap
-        let lapTime;
-        laps.length !== 0 ? lapTime = time - totalLapTime.current : lapTime = time; //Subtract current total lap time from time display time for new lap time
-        //Push new lap to lap array
-        setLaps(lapsList => [...lapsList, lapTime]);
+        setLaps(lapsList => [time - lapsList.reduce((a, b) => a + b, 0), ...lapsList]);
     }
 
-    //Update shortest and longest laps on addition of new lap to array 
-    useEffect(() => {
-        if (laps.length === 1){
-            shortestLap.current = laps[0];
-            longestLap.current = laps[0];
-        } else if (laps.length > 1) {
-            for (let i=0; i < laps.length; i++){
-                if (shortestLap.current >= laps[i]) {
-                    shortestLap.current = laps[i];
-                }
-                else if (longestLap.current <= laps[i]) {
-                    longestLap.current = laps[i];
-                }
-            }
-        }
 
-        //Update display laps to have shortest lap in green and longest lap in red
-        lapDisplay.current = [];
-        for (let i=laps.length-1; i >= 0; i--) {
-            if (longestLap.current === laps[i] && laps.length > 1) {
-                lapDisplay.current.push(<li style={{ color: 'red' }} key={i}>{`Lap ${i+1} - ${formatTime(laps[i])}`}</li>);
-            } else if (shortestLap.current === laps[i] && laps.length > 1) {
-                lapDisplay.current.push(<li style={{ color: 'green' }} key={i}>{`Lap ${i+1} - ${formatTime(laps[i])}`}</li>);
-            } else {
-                lapDisplay.current.push(<li style={{ color: 'white' }} key={i}>{`Lap ${i+1} - ${formatTime(laps[i])}`}</li>);
-            }
-        }
-        //Update total lap time
-        totalLapTime.current = laps.reduce((a,b) => a + b, 0);
+    const formattedLaps = useMemo(() => {
+        const [max, min] = laps.length < 2
+            ? [null, null]
+            : [Math.max(...laps), Math.min(...laps)]
+
+        return laps.map((lap, i) => {
+            const color = 
+            lap === max ? 'red' :
+            lap === min ? 'green' : 'white'
+            return <li style={{ color }} key={laps.length - i - 1}>{`Lap ${laps.length - i} - ${formatTime(lap)}`}</li>
+        })
     }, [laps])
 
     return (
@@ -101,8 +71,10 @@ function Stopwatch() {
                 <button type="button" id="toggle" onClick={flipToggle}>{isOn ? "Stop" : "Start"}</button>
             </div>
             <div className="laps">
-                <h2 className="lap-times-label">Lap times</h2>
-                {lapDisplay.current}
+                <h1 className="lap-times-label">Lap times</h1>
+                <ul>
+                {formattedLaps}
+                </ul>
             </div>
         </div>
     )
