@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import {msToTimerString, lapTimeToString} from "./utils.js";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import {msToTimerString, formatLap} from "./utils.js";
 
 export function Timer() {
     const [isRunning, setRunning] = useState(false);
     const [timeElapsed, setTimeElapsed] = useState(0);
     const [lapTimes, setLapTimes] = useState([]);
-    const [lapDisplay, setLapDisplay] = useState("");
+    const startTime = useRef(0);
 
     function toggle() {
-        setRunning(!isRunning);
+        setRunning(x => !x);
     }
 
     function resetOrLap() {
@@ -21,45 +21,56 @@ export function Timer() {
         }
         else {
             // Resetting
+            startTime.current = 0
             setTimeElapsed(0);
             setLapTimes([]);
             setRunning(false);
-            setLapDisplay("");
         }
     }
 
+    useEffect(() => {
+        if (isRunning) {
+            startTime.current += Date.now()
+        } else if (startTime.current !== 0) { // bug was here
+            startTime.current -= Date.now()
+        }
+    }, [isRunning])
+
     // On start/stop toggle
     useEffect( () => {
-        let timerProcess;
-        const startTime = Date.now() - timeElapsed;
-
-        // If running, keep updating timer
-        if (isRunning) {
-            timerProcess = setInterval(() => {
-                setTimeElapsed(Date.now() - startTime);
-            }, 0);
+        console.log(startTime.current);
+        if (!isRunning) {
+            return
         }
+
+        let timerProcess;
+        timerProcess = setInterval(() => {
+            setTimeElapsed(Date.now() - startTime.current);
+        }, 0);
 
         return () => clearInterval(timerProcess);
 
-    }, [isRunning]); // why does react tell me to add timeElapsed here? I don't want to create a new interval at every time change (i.e. every ms).
-                     // quick search tells me to wrap useEffect in a useCallback to avoid
+    }, [isRunning]);
 
                      
-    // When lap time gets added to array
-    useEffect( () => {
-        const newLapDisplay = [...lapTimes].map((time, index) => lapTimeToString([...lapTimes], index));
-        setLapDisplay(newLapDisplay);
+    // When a new lap gets added
+    const lapDisplay = useMemo(() => {
+        const minLapTime = lapTimes.length < 2 ? null : Math.min(...lapTimes);
+        const maxLapTime = lapTimes.length < 2 ? null : Math.max(...lapTimes);
+
+        return [...lapTimes].map((lap, index) => formatLap(lap, index, lapTimes.length, minLapTime, maxLapTime));
+
     }, [lapTimes]);
+    
 
     return (
         <div className="App">
             <header className="App-header">
                 <div>
-                    <h1>Elapsed time: {msToTimerString(timeElapsed)}</h1>
+                    <h1>{msToTimerString(timeElapsed)}</h1>
                         <button onClick={toggle}>{isRunning ? "Stop" : "Start"}</button>
                         <button onClick={resetOrLap}>{isRunning ? "Lap" : "Reset"}</button>
-                        <ul>{lapDisplay}</ul>
+                        <ul> {lapDisplay} </ul>
                 </div>
             </header>
         </div>

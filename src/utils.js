@@ -19,24 +19,20 @@ export function msToTimerString(ms) {
 }
 
 // Takes in a lap index and an array of laps, returns a string format based on whether it is min/max/regular
-export function lapTimeToString(lapTimes, lapIndex) {
-    const minLapTime = Math.min(...lapTimes);
-    const maxLapTime = Math.max(...lapTimes);
-    const lapTime = lapTimes[lapIndex];
-    let lapString;
+export function formatLap(lap, index, length, min, max) {
+    let colour;
 
     // If first lap, no color
-    if (lapTimes.length === 1) {
-        lapString = <li key={lapIndex}>Lap {lapIndex} {msToTimerString(lapTime)}</li>;
+    if (lap === max) {
+        colour = "red";
     }
-    else if (lapTime <= minLapTime) {
-    lapString = <li key={lapIndex} style={{ color: "green" }}>Lap {lapIndex} {msToTimerString(lapTime)}</li>;
-    }
-    else if (lapTime >= maxLapTime) {
-        lapString = <li key={lapIndex} style={{ color: "red" }}>Lap {lapIndex} {msToTimerString(lapTime)}</li>;
+    else if (lap === min) {
+        colour = "green";
     }
     else {
-        lapString = <li key={lapIndex}>Lap {lapIndex} {msToTimerString(lapTime)}</li>;
+        colour = "white";
     }
-    return lapString;
-}
+    
+    return <li key={length - index - 1} style={{ color: colour }} >Lap {length-index} {msToTimerString(lap)}</li>
+
+ }
