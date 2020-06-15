@@ -21,6 +21,7 @@ function Stopwatch() {
     const longestLap = useRef(null);
     const lapDisplay = useRef([]);
     const totalLapTime = useRef(0); 
+    //const stopTimeAdjustment = useRef(0);
 
     //Increment clock on start and don't increment on stop
     useEffect(() => {
@@ -32,18 +33,21 @@ function Stopwatch() {
             return () => {
                 clearInterval(interval.current);
                 startTime.current -= Date.now();
+                //stopTimeAdjustment.current += (time - totalLapTime.current);
             }
         }
     }, [isOn])
 
     function reset() {
-        setTime(0);
-        setLaps(lapsList => []);
         startTime.current = 0;
         startLapTime.current = 0;
         shortestLap.current = null; //In milliseconds
         longestLap.current = null; //In milliseconds
         totalLapTime.current = 0;
+        //lapDisplay.current = [];
+        setTime(0);
+        setLaps(lapsList => []);
+        //stopTimeAdjustment.current = 0;
     }
 
     function flipToggle(){
@@ -76,13 +80,13 @@ function Stopwatch() {
 
         //Update display laps to have shortest lap in green and longest lap in red
         lapDisplay.current = [];
-        for (let i=0; i < laps.length; i++) {
+        for (let i=laps.length-1; i >= 0; i--) {
             if (longestLap.current === laps[i] && laps.length > 1) {
-                lapDisplay.current.push(<li style={{ color: 'red' }} key={i}>{formatTime(laps[i])}</li>);
+                lapDisplay.current.push(<li style={{ color: 'red' }} key={i}>{`Lap ${i+1} - ${formatTime(laps[i])}`}</li>);
             } else if (shortestLap.current === laps[i] && laps.length > 1) {
-                lapDisplay.current.push(<li style={{ color: 'green' }} key={i}>{formatTime(laps[i])}</li>);
+                lapDisplay.current.push(<li style={{ color: 'green' }} key={i}>{`Lap ${i+1} - ${formatTime(laps[i])}`}</li>);
             } else {
-                lapDisplay.current.push(<li style={{ color: 'white' }} key={i}>{formatTime(laps[i])}</li>);
+                lapDisplay.current.push(<li style={{ color: 'white' }} key={i}>{`Lap ${i+1} - ${formatTime(laps[i])}`}</li>);
             }
         }
         //Update total lap time
