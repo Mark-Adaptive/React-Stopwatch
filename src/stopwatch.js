@@ -82,7 +82,7 @@ function Stopwatch() {
             } else if (shortestLap.current === laps[i] && laps.length > 1) {
                 lapDisplay.current.push(<li style={{ color: 'green' }} key={i}>{formatTime(laps[i])}</li>);
             } else {
-                lapDisplay.current.push(<li style={{ color: 'black' }} key={i}>{formatTime(laps[i])}</li>);
+                lapDisplay.current.push(<li style={{ color: 'white' }} key={i}>{formatTime(laps[i])}</li>);
             }
         }
         //Update total lap time
@@ -93,8 +93,8 @@ function Stopwatch() {
         <div className = "timer">
             <h1 id="timeDisplay">{formatTime(time)}</h1>
             <div className="buttons">
-            <button type="button" id="lap" onClick={isOn ? lap : reset}>{isOn ? "Lap" : "Reset"}</button>
-            <button type="button" id="toggle" onClick={flipToggle}>{isOn ? "Stop" : "Start"}</button>
+                <button type="button" id="lap" onClick={isOn ? lap : reset}>{isOn ? "Lap" : "Reset"}</button>
+                <button type="button" id="toggle" onClick={flipToggle}>{isOn ? "Stop" : "Start"}</button>
             </div>
             <div className="laps">
                 <h2 className="lap-times-label">Lap times</h2>
