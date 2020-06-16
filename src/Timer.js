@@ -2,20 +2,6 @@ import React, { useState, useEffect, useRef, useMemo, useReducer } from 'react';
 import {msToTimerString, formatLap} from "./utils.js";
 import {useStopwatch, reducer, initialStopwatch} from "./useStopwatch.js"
 
-/*
-const useStopwatch: () => [
-    elapsedTime: number,
-    isRunnig: boolean,
-    dispatch: (action: 'TOGGLE' | 'RESET') => void
-]
-
-const useStopwatchWithLaps: () => [
-    elapsedTime: number,
-    isRunnig: boolean,
-    laps: number[],
-    dispatch: (action: 'TOGGLE' | 'RESET_OR_LAP') => void
-]
-*/
 function Timer() {
 
     const [{elapsedTime, isRunning}, dispatch] = useReducer(reducer, initialStopwatch);
@@ -37,6 +23,13 @@ function Timer() {
         return () => clearInterval(timerProcess);
 
     }, [isRunning]);
+
+    // At reset
+    useEffect(() => {
+        if (elapsedTime == 0) {
+            startTime.current = 0;
+        }
+    }, [elapsedTime]);
 
     // When a new lap gets added
     /*/const lapDisplay = useMemo(() => {

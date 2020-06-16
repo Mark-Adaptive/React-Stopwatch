@@ -5,18 +5,22 @@ export const initialStopwatch = {
     isRunning: false
 }
 
-const Actions = {type: 'TICK', payload: 0} | {type: 'TOGGLE', payload: undefined} | {type: 'RESET', payload: undefined};
+const Actions = {type: 'TICK', payload: undefined} | {type: 'TOGGLE', payload: undefined} | {type: 'RESET', payload: undefined};
 
-export function reducer(state: initialStopwatch, {type, payload}: Actions): inititalStopwatch {
+export function reducer(state: initialStopwatch, {type, payload}: Actions): initialStopwatch {
     switch(type) {
         case "TOGGLE":
-            console.log("here");
+            console.log("TOGGLE");
+            console.log(state.elapsedTime);
             return {...state, isRunning: !state.isRunning};
         case "TICK":
+            console.log("TICK");
+            console.log(state.elapsedTime);
             return {...state, elapsedTime: payload};
         case "RESET":
-            console.log("resetting");
-            return initialStopwatch;
+            console.log("RESET");
+            console.log(state.elapsedTime);
+            return {...initialStopwatch, elapsedTime: 0};
         default:
             return state;
     }
