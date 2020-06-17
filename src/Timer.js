@@ -4,8 +4,7 @@ import { reducer, initialStopwatch, initialLaps } from "./useStopwatch.js"
 
 function Timer() {
 
-    const [{elapsedTime, isRunning}, dispatch] = useReducer(reducer, initialStopwatch);
-    // const [lapTimes, dispatch] = useReducer(lapReducer, initialLaps)
+    const [{elapsedTime, isRunning, lapTimes}, dispatch] = useReducer(reducer, initialStopwatch);
     const startTime = useRef(0);
     
     let timerProcess;

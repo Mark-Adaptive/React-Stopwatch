@@ -2,7 +2,8 @@
 
 export const initialStopwatch = {
     elapsedTime: 0,
-    isRunning: false
+    isRunning: false,
+    lapTimes = []
 }
 
 export const initialLaps = {
@@ -17,17 +18,11 @@ export function reducer(state, {type, payload}) {
             return {...state, elapsedTime: payload};
         case "RESET":
             return {...initialStopwatch, elapsedTime: 0};
+        // case "LAPS":
+            // const newLapTime = .. 
+            // return {...initialStopwatch, lapTimes: {newLapTime, ...(state.lapTimes)}}
         default:
             return state;
     }
 }
 
-export function lapReducer(state, {type, payload}) {
-    switch(type) {
-        case "LAP":
-            // const newLapTime = 
-            // return {...state, }
-        default:
-            return state;
-    }
-}
