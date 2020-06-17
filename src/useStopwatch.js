@@ -1,6 +1,3 @@
-//import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { formatLap } from "./utils.js"
-
 export const initialStopwatch = {
     elapsedTime: 0,
     isRunning: false,

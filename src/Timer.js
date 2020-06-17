@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useReducer } from 'react';
+import React, { useEffect, useRef, useMemo, useReducer } from 'react';
 import {msToTimerString, formatLap} from "./utils.js";
 import { reducer, initialStopwatch } from "./useStopwatch.js"
 
