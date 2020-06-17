@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo, useReducer } from 'react';
 import {msToTimerString, formatLap} from "./utils.js";
-import {useStopwatch, reducer, initialStopwatch} from "./useStopwatch.js"
+import { reducer, initialStopwatch, initialLaps } from "./useStopwatch.js"
 
 function Timer() {
 
     const [{elapsedTime, isRunning}, dispatch] = useReducer(reducer, initialStopwatch);
+    // const [lapTimes, dispatch] = useReducer(lapReducer, initialLaps)
     const startTime = useRef(0);
     
     let timerProcess;
