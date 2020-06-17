@@ -5,6 +5,7 @@ import { reducer, initialStopwatch } from "./useStopwatch.js"
 function Timer() {
 
     const [{elapsedTime, isRunning, lapTimes}, dispatch] = useReducer(reducer, initialStopwatch);
+    // const [lapTimes, dispatch] = useReducer(lapReducer, initialLaps);
     const startTime = useRef(0);
     
     let timerProcess;
@@ -49,6 +50,7 @@ function Timer() {
                     <h1>{msToTimerString(elapsedTime)}</h1>
                         <button onClick={() => dispatch({type: "TOGGLE"})}>{isRunning ? "Stop" : "Start"}</button>
                         <button onClick={() => dispatch({type: "RESET"})}>{isRunning ? "Lap" : "Reset"}</button>
+                        {lapTimes}
                 </div>
             </header>
         </div>
