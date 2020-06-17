@@ -13,7 +13,7 @@ function Timer() {
             startTime.current += Date.now();
             timerProcess = setInterval(() => {
                 dispatch({type: "TICK", payload: Date.now() - startTime.current});
-            }, 0)
+            }, 1)
         }
 
         else if (startTime.current !== 0) {
@@ -26,11 +26,12 @@ function Timer() {
 
     // At reset
     useEffect(() => {
-        if (elapsedTime == 0) {
+        if (elapsedTime === 0) {
             startTime.current = 0;
         }
     }, [elapsedTime]);
 
+    
     // When a new lap gets added
     /*/const lapDisplay = useMemo(() => {
         const minLapTime = lapTimes.length < 2 ? null : Math.min(...lapTimes);
