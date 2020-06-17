@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useMemo, useReducer } from 'react';
 import {msToTimerString, formatLap} from "./utils.js";
-import { reducer, initialStopwatch } from "./useStopwatch.js"
+import { initialStopwatch, reducerWithLaps } from "./useStopwatch.js"
 
 function Timer() {
 
-    const [{elapsedTime, isRunning, lapTimes}, dispatch] = useReducer(reducer, initialStopwatch);
-    // const [lapTimes, dispatch] = useReducer(lapReducer, initialLaps);
+    const [{elapsedTime, isRunning, lapTimes}, dispatch] = useReducer(reducerWithLaps, initialStopwatch);
+    //const [lapTimes, lapDispatch] = useReducer(lapReducer, initialLaps);
     const startTime = useRef(0);
     
     let timerProcess;
@@ -31,10 +31,10 @@ function Timer() {
             startTime.current = 0;
         }
     }, [elapsedTime]);
-
     
     // When a new lap gets added
     const lapDisplay = useMemo(() => {
+        console.log(lapTimes);
         const minLapTime = lapTimes.length < 2 ? null : Math.min(...lapTimes);
         const maxLapTime = lapTimes.length < 2 ? null : Math.max(...lapTimes);
 
@@ -42,18 +42,21 @@ function Timer() {
 
     }, [lapTimes]);
 
-
     return (
+        <body>
         <div className="App">
             <header className="App-header">
                 <div>
-                    <h1>{msToTimerString(elapsedTime)}</h1>
-                        <button onClick={() => dispatch({type: "TOGGLE"})}>{isRunning ? "Stop" : "Start"}</button>
-                        <button onClick={() => isRunning ? dispatch({type: "LAP"}) : dispatch({type: "RESET"})}>{isRunning ? "Lap" : "Reset"}</button>
-                        {lapDisplay}
+                    <h1 id="timeDisplay">{msToTimerString(elapsedTime)}</h1>
+                    <div className="buttons">
+                        <button id="toggle" onClick={() => dispatch({type: "TOGGLE"})}>{isRunning ? "Stop" : "Start"}</button>
+                        <button id="lap" onClick={() => isRunning ? dispatch({type: "LAP", payload: elapsedTime}) : dispatch({type: "RESET"})}>{isRunning ? "Lap" : "Reset"}</button>
+                    </div>
+                        <ul className="laps"> {lapDisplay} </ul>
                 </div>
             </header>
         </div>
+        </body>
     )
 }
 
