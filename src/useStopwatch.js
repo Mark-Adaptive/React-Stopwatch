@@ -15,12 +15,10 @@ export function reducer(state, {type, payload}) {
             return {...state, elapsedTime: payload};
         case "RESET":
             return {...initialStopwatch, elapsedTime: 0};
-        /* case "LAP":
-            const minLapTime = state.lapTimes.length < 2 ? null : Math.min(...state.lapTimes);
-            const maxLapTime = state.lapTimes.length < 2 ? null : Math.max(...state.lapTimes);
-            const newLapTimes = [...state.lapTimes].map((lap, index) => formatLap(lap, index, state.lapTimes.length, minLapTime, maxLapTime)); 
-            return {...state, lapTimes: newLapTimes};
-            */
+        case "LAP":
+            const timeCountedInLaps = state.lapTimes.reduce((sum, lapTime) => sum + lapTime, 0);
+            const newLapTime = state.elapsedTime - timeCountedInLaps; 
+            return {...state, lapTimes: [newLapTime, ...state.lapTimes]};
         default:
             return state;
     }

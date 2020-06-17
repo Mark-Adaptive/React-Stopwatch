@@ -34,14 +34,14 @@ function Timer() {
 
     
     // When a new lap gets added
-    /*/const lapDisplay = useMemo(() => {
+    const lapDisplay = useMemo(() => {
         const minLapTime = lapTimes.length < 2 ? null : Math.min(...lapTimes);
         const maxLapTime = lapTimes.length < 2 ? null : Math.max(...lapTimes);
 
         return [...lapTimes].map((lap, index) => formatLap(lap, index, lapTimes.length, minLapTime, maxLapTime));
 
     }, [lapTimes]);
-    */
+
 
     return (
         <div className="App">
@@ -49,8 +49,8 @@ function Timer() {
                 <div>
                     <h1>{msToTimerString(elapsedTime)}</h1>
                         <button onClick={() => dispatch({type: "TOGGLE"})}>{isRunning ? "Stop" : "Start"}</button>
-                        <button onClick={() => dispatch({type: "RESET"})}>{isRunning ? "Lap" : "Reset"}</button>
-                        {lapTimes}
+                        <button onClick={() => isRunning ? dispatch({type: "LAP"}) : dispatch({type: "RESET"})}>{isRunning ? "Lap" : "Reset"}</button>
+                        {lapDisplay}
                 </div>
             </header>
         </div>
