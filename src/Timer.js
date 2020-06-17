@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useReducer } from 'react';
 import {msToTimerString, formatLap} from "./utils.js";
-import { reducer, initialStopwatch, initialLaps } from "./useStopwatch.js"
+import { reducer, initialStopwatch } from "./useStopwatch.js"
 
 function Timer() {
 

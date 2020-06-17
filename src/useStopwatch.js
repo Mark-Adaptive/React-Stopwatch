@@ -6,10 +6,6 @@ export const initialStopwatch = {
     lapTimes: []
 }
 
-export const initialLaps = {
-    lapTimes: []
-}
-
 export function reducer(state, {type, payload}) {
     switch(type) {
         case "TOGGLE":
