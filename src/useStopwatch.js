@@ -3,7 +3,7 @@
 export const initialStopwatch = {
     elapsedTime: 0,
     isRunning: false,
-    lapTimes = []
+    lapTimes: []
 }
 
 export const initialLaps = {
