@@ -14,11 +14,6 @@ import React, { useEffect, useRef, useMemo, useReducer } from 'react';
 */
 
 export const useStopwatch = () => {
-    const initialStopwatch = {
-        elapsedTime: 0,
-        isRunning: false,
-    }
-
     const startTime = useRef(0);
 
     function reducer (state, {type, payload}) {
@@ -28,13 +23,13 @@ export const useStopwatch = () => {
             case "TICK":
                 return {...state, elapsedTime: payload};
             case "RESET":
-                return {...initialStopwatch, elapsedTime: 0};
+                return {elapsedTime: 0, isRunning: false};
             default:
                 return state;
         }
     }
 
-    const [{elapsedTime, isRunning}, dispatch] = useReducer(reducer, initialStopwatch);
+    const [{elapsedTime, isRunning}, dispatch] = useReducer(reducer, {elapsedTime: 0, isRunning: false});
 
     let timerProcess;
     useEffect (() => {
@@ -62,6 +57,31 @@ export const useStopwatch = () => {
     }, [elapsedTime]);
 
     return [{elapsedTime, isRunning}, dispatch];
+}
+
+export const useStopwatchWithLaps = () => {
+    const [{elapsedTime, isRunning}, dispatch] = useStopwatch();
+    console.log(elapsedTime);
+    console.log(isRunning);
+    let lapTimes = [];
+
+    function reducerWithLaps (type) {
+        switch(type) {	
+            case "LAP":
+                const timeCountedInLaps = lapTimes.reduce((sum, lapTime) => sum + lapTime, 0);
+                const newLapTime = elapsedTime - timeCountedInLaps; 
+                console.log([newLapTime, ...lapTimes]);
+                return [newLapTime, ...lapTimes];
+            case "RESET":
+                return [];
+            default:
+                console.log(lapTimes);
+                return lapTimes;
+        }	
+    }
+    const newLaps = reducerWithLaps(dispatch.type);  
+    console.log(newLaps);
+    return [{elapsedTime, isRunning, newLaps}, dispatch];
 }
 
 
