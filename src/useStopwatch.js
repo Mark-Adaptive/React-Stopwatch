@@ -1,35 +1,27 @@
-import React, { useEffect, useRef, useMemo, useReducer } from 'react';
-
-/*export const reducerWithLaps = (state, {type, payload}) => {
-    switch(type) {	
-        case "LAP":	
-            const timeCountedInLaps = state.lapTimes.reduce((sum, lapTime) => sum + lapTime, 0);
-            const newLapTime = payload - timeCountedInLaps; 
-            return {...state, lapTimes: [newLapTime, ...state.lapTimes]};
-        default:
-            const {elapsedTime, isRunning, lapTimes} = reducer(state, {type, payload});
-            return {elapsedTime, isRunning, lapTimes};
-    }	
-}
-*/
+import { useEffect, useRef, useReducer } from 'react';
 
 export const useStopwatch = () => {
+    const initialStopwatch = {
+        elapsedTime: 0,
+        isRunning: false,
+    }
+
     const startTime = useRef(0);
 
-    function reducer (state, {type, payload}) {
+    function stopwatchReducer(state, {type, payload}) {
         switch(type) {
             case "TOGGLE":
                 return {...state, isRunning: !state.isRunning};
             case "TICK":
                 return {...state, elapsedTime: payload};
             case "RESET":
-                return {elapsedTime: 0, isRunning: false};
+                return {...initialStopwatch, elapsedTime: 0};
             default:
                 return state;
         }
     }
 
-    const [{elapsedTime, isRunning}, dispatch] = useReducer(reducer, {elapsedTime: 0, isRunning: false});
+    const [{elapsedTime, isRunning}, dispatch] = useReducer(stopwatchReducer, initialStopwatch);
 
     let timerProcess;
     useEffect (() => {
@@ -40,13 +32,10 @@ export const useStopwatch = () => {
                 dispatch({type: "TICK", payload: Date.now() - startTime.current});
             }, 1)
         }
-
         else if (startTime.current !== 0) {
             startTime.current -= Date.now();
         }
-
         return () => clearInterval(timerProcess);
-
     }, [isRunning]);
 
     // At reset
@@ -55,33 +44,43 @@ export const useStopwatch = () => {
             startTime.current = 0;
         }
     }, [elapsedTime]);
-
+    
     return [{elapsedTime, isRunning}, dispatch];
 }
 
 export const useStopwatchWithLaps = () => {
-    const [{elapsedTime, isRunning}, dispatch] = useStopwatch();
-    console.log(elapsedTime);
-    console.log(isRunning);
-    let lapTimes = [];
-
-    function reducerWithLaps (type) {
-        switch(type) {	
-            case "LAP":
-                const timeCountedInLaps = lapTimes.reduce((sum, lapTime) => sum + lapTime, 0);
-                const newLapTime = elapsedTime - timeCountedInLaps; 
-                console.log([newLapTime, ...lapTimes]);
-                return [newLapTime, ...lapTimes];
-            case "RESET":
-                return [];
-            default:
-                console.log(lapTimes);
-                return lapTimes;
-        }	
+    const initialLaps = {
+        lapTimes: []
     }
-    const newLaps = reducerWithLaps(dispatch.type);  
-    console.log(newLaps);
-    return [{elapsedTime, isRunning, newLaps}, dispatch];
+    const [{elapsedTime, isRunning}, stopwatchDispatch] = useStopwatch();
+
+    function lapReducer(state, {type, payload}) {
+        switch(type) {
+            case "LAP":
+                const timeCountedInLaps = state.lapTimes.reduce((sum, lapTime) => sum + lapTime, 0);
+                const newLapTime = payload - timeCountedInLaps; // payload here should be elapsedTime
+                return { lapTimes: [newLapTime, ...state.lapTimes] };
+            case "RESET":
+                return initialLaps;
+            default:
+                return state;
+        }
+    }
+
+    const [lapState, lapDispatch] = useReducer(lapReducer, initialLaps); // returns just the new lap state (without elapsedTime, isRunning)
+
+    const dispatch = ({type}) => {
+        stopwatchDispatch({type: type});
+        lapDispatch({type: type, payload: elapsedTime});
+      };
+
+     const newState = {
+         elapsedTime: elapsedTime,
+         isRunning: isRunning,
+         laps: [...lapState.lapTimes]
+     }
+
+    return [newState, dispatch]; 
 }
 
 

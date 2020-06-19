@@ -12,3 +12,16 @@ code {
     monospace;
 }
 
+button {
+  font-size: 30px;
+  color: white;
+  background-color: transparent;
+  border-color: white;
+  inset: false;
+  padding: 20px;
+  margin: 20px;
+}
+
+#lapDisplay {
+  margin-top: 10px;
+}

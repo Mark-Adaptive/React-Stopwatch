@@ -1,20 +1,16 @@
-import React, { useEffect, useRef, useMemo, useReducer } from 'react';
+import React, { useMemo } from 'react';
 import {msToTimerString, formatLap} from "./utils.js";
 import { useStopwatchWithLaps } from "./useStopwatch.js"
 
 function Timer() {
-
-    const [{elapsedTime, isRunning, lapTimes}, dispatch] = useStopwatchWithLaps();
-    //const [lapTimes, lapDispatch] = useReducer(lapReducer, initialLaps);
+    const [{elapsedTime, isRunning, laps}, dispatch] = useStopwatchWithLaps();
     
     // When a new lap gets added
     const lapDisplay = useMemo(() => {
-        const minLapTime = lapTimes.length < 2 ? null : Math.min(...lapTimes);
-        const maxLapTime = lapTimes.length < 2 ? null : Math.max(...lapTimes);
-
-        return [...lapTimes].map((lap, index) => formatLap(lap, index, lapTimes.length, minLapTime, maxLapTime));
-
-    }, [lapTimes]);
+        const minLapTime = laps.length < 2 ? null : Math.min(...laps);
+        const maxLapTime = laps.length < 2 ? null : Math.max(...laps);
+        return [...laps].map((lap, index) => formatLap(lap, index, laps.length, minLapTime, maxLapTime));
+    }, [laps]);
 
     return (
         <div className="App">
@@ -26,7 +22,7 @@ function Timer() {
                         <button id="lap" onClick={() => isRunning ? dispatch({type: "LAP"}) : dispatch({type: "RESET"})}>{isRunning ? "Lap" : "Reset"}</button>
                     </div>
                     <div className="laps">
-                        <ul id="lap-display"> {lapDisplay} </ul>
+                        <ul id="lapDisplay"> {lapDisplay} </ul>
                     </div>
                 </div>
             </header>
